@@ -17,11 +17,11 @@ public class Application {
             var sql2 = "INSERT INTO users (username, phone) VALUES (?, ?)";
             try (var preparedStatement = conn.prepareStatement(sql2, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, "Nikita");
-                preparedStatement.setString(2, "333333333");
+                preparedStatement.setString(2, "111111111");
                 preparedStatement.executeUpdate();
 
                 preparedStatement.setString(1, "Dmitriy");
-                preparedStatement.setString(2, "111111111");
+                preparedStatement.setString(2, "333333333");
                 preparedStatement.executeUpdate();
 
                 var generatedKeys = preparedStatement.getGeneratedKeys();
@@ -34,7 +34,6 @@ public class Application {
             var sqldelete = "DELETE FROM users WHERE username = ?";
             try (var preparedStatement = conn.prepareStatement(sqldelete)) {
                 preparedStatement.setString(1, "Nikita");
-                preparedStatement.executeUpdate();
                 int rows = preparedStatement.executeUpdate();
                 System.out.println("Delete users: " + rows);
             }
