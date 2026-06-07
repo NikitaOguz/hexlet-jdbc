@@ -2,6 +2,7 @@ package io.hexlet;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Application {
     public static void main(String[] args) throws SQLException {
@@ -13,9 +14,29 @@ public class Application {
                 statement.execute(sql);
             }
 
-            var sql2 = "INSERT INTO users (username, phone) VALUES ('tommy', '123456789')";
-            try (var statement2 = conn.createStatement()) {
-                statement2.executeUpdate(sql2);
+            var sql2 = "INSERT INTO users (username, phone) VALUES (?, ?)";
+            try (var preparedStatement = conn.prepareStatement(sql2, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, "Nikita");
+                preparedStatement.setString(2, "79411949");
+                preparedStatement.executeUpdate();
+
+                preparedStatement.setString(1, "Dmitriy");
+                preparedStatement.setString(2, "49864891");
+                preparedStatement.executeUpdate();
+
+                var generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    System.out.println(generatedKeys.getLong(1));
+                } else {
+                    throw new SQLException("DB have not returned an id after saving the entity");
+                }
+            }
+            var sqldelete = "DELETE users WHERE username = ?";
+            try (var preparedStatement = conn.prepareStatement(sqldelete)) {
+                preparedStatement.setString(1, "Nikita");
+                preparedStatement.executeUpdate();
+                int rows = preparedStatement.executeUpdate();
+                System.out.println("Удалено пользователей: " + rows);
             }
 
             var sql3 = "SELECT * FROM users";
